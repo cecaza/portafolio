@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../main.dart';
 import '../../../routes/routes.dart';
 
-class SplashView extends StatefulWidget {
+class SplashView extends StatefulWidget { 
   const SplashView({super.key});
 
   @override
@@ -40,7 +40,7 @@ class _SplashViewState extends State<SplashView> {
     }
   }
 
-  Future<void> _goTo(String routeName) {
+  void _goTo(String routeName) {
     Navigator.pushReplacementNamed(
       context,
       routeName,
