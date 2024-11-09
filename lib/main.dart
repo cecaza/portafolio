@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'app/data/repositories_implementation/authentication_repository_impl.dart';
 import 'app/data/repositories_implementation/connectivity_repository_impl.dart';
+import 'app/data/services/remote/internet_checker.dart';
 import 'app/domain/repositories/authentication_repository.dart';
 import 'app/domain/repositories/connectivity_repository.dart';
 import 'app/my_app.dart';
@@ -11,6 +12,7 @@ void main() {
   runApp(Injector(
     connectivityRepository: ConnectivityRepositoryImpl(
       Connectivity(),
+      InternetChecker(),
     ),
     authenticationRepository: AuthenticationRepositoryImpl(),
     child: const MyApp(),
