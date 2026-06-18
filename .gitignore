@@ -1,3 +1,6 @@
+# Secrets / variables de entorno (NO subir el token de TMDB)
+dart_define.json
+
 # Miscellaneous
 *.class
 *.log

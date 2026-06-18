@@ -1,22 +1,9 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
+// Importa la implementación correcta según la plataforma:
+//  - web  -> internet_checker_web.dart    (no usa dart:io)
+//  - resto -> internet_checker_native.dart (usa dart:io)
+import 'internet_checker_web.dart'
+    if (dart.library.io) 'internet_checker_native.dart' as impl;
 
 class InternetChecker {
-  Future<bool> hasInternet() async {
-    try {
-      if (kIsWeb) {
-        final Response = await get(
-          Uri.parse('google.com'),
-        );
-        return Response.statusCode == 200;
-      } else {
-        final list = await InternetAddress.lookup('google.com');
-        return list.isNotEmpty && list.first.rawAddress.isNotEmpty;
-      }
-    } catch (e) {
-      return false;
-    }
-  }
+  Future<bool> hasInternet() => impl.hasInternet();
 }

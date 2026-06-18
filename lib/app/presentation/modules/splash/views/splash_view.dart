@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../../../main.dart';
+import '../../../../../gen/assets.gen.dart';
+import '../../../../domain/repositories/authentication_repository.dart';
+import '../../../../domain/repositories/connectivity_repository.dart';
+import '../../../global/controllers/session_controller.dart';
+import '../../../global/widgets/cinexa_loader.dart';
 import '../../../routes/routes.dart';
 
-class SplashView extends StatefulWidget { 
+class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
   @override
@@ -18,45 +23,46 @@ class _SplashViewState extends State<SplashView> {
   }
 
   Future<void> _init() async {
-    final injector = Injector.of(context);
-    final connectivityRepository = injector.connectivityRepository;
+    // Capturamos las dependencias ANTES de los await (buena práctica con
+    // BuildContext en código asíncrono).
+    final connectivityRepository = context.read<ConnectivityRepository>();
+    final authenticationRepository = context.read<AuthenticationRepository>();
+    final sessionController = context.read<SessionController>();
+
     final hasInternet = await connectivityRepository.hasInternet;
-    if (hasInternet) {
-      final authenticationRepository = injector.authenticationRepository;
-      final isSignedIn = await authenticationRepository.isSignedIn;
-      if (isSignedIn) {
-        final user = await authenticationRepository.getUserData();
-        if (mounted) {
-          if (user != null) {
-            //home
-                _goTo(Routes.home);
-          } else {
-            _goTo(Routes.signIn);
-          }
-        }
-      } else if (mounted) {
-        _goTo(Routes.signIn);
-      }
-    }else{
-       _goTo(Routes.offline);
+    if (!mounted) return;
+
+    if (!hasInternet) {
+      _goTo(Routes.offline);
+      return;
+    }
+
+    final user = await authenticationRepository.getUserData();
+    if (!mounted) return;
+
+    if (user != null) {
+      sessionController.setUser(user);
+      _goTo(Routes.home);
+    } else {
+      _goTo(Routes.signIn);
     }
   }
 
   void _goTo(String routeName) {
-    Navigator.pushReplacementNamed(
-      context,
-      routeName,
-    );
+    Navigator.pushReplacementNamed(context, routeName);
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: SizedBox(
-          width: 80,
-          height: 80,
-          child: CircularProgressIndicator(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.branding.splash.splashLogoSvg.svg(width: 180),
+            const SizedBox(height: 24),
+            const CinexaLoader(size: 64),
+          ],
         ),
       ),
     );

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+<defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#FF5E62"/><stop offset="1" stop-color="#FF9966"/>
+</linearGradient></defs>
+<rect width="1280" height="720" fill="#241B33"/>
+<circle cx="640" cy="302" r="90" fill="none" stroke="url(#grad)" stroke-width="9.9"/>
+<circle cx="640" cy="302" r="72.0" fill="#241B33"/>
+<circle cx="640.0" cy="216.9" r="6.2" fill="#FF5E62"/>
+<circle cx="700.1" cy="241.9" r="6.2" fill="#FF7A5F"/>
+<circle cx="725.0" cy="302.0" r="6.2" fill="#FF8C5A"/>
+<circle cx="700.1" cy="362.1" r="6.2" fill="#FF9966"/>
+<circle cx="640.0" cy="387.1" r="6.2" fill="#FF5E62"/>
+<circle cx="579.9" cy="362.1" r="6.2" fill="#FF7A5F"/>
+<circle cx="555.0" cy="302.0" r="6.2" fill="#FF8C5A"/>
+<circle cx="579.9" cy="241.9" r="6.2" fill="#FF9966"/>
+<path d="M624.1 274.8 L624.1 329.2 L667.2 302.0 Z" fill="url(#grad)"/>
+<text x="640" y="467" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" font-weight="700" letter-spacing="4" fill="#8A7F99">CINEXA</text>
+<text x="640" y="507" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#3A2F4D">Image unavailable</text>
+</svg>

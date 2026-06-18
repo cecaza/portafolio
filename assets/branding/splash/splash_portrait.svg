@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1242 2688" width="1242" height="2688">
+<defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#FF5E62"/><stop offset="1" stop-color="#FF9966"/>
+</linearGradient></defs>
+<rect width="1242" height="2688" fill="#1A1426"/>
+<circle cx="621" cy="1128" r="161.46" fill="none" stroke="url(#grad)" stroke-width="17.7606"/>
+<circle cx="621" cy="1128" r="129.168" fill="#1A1426"/>
+<circle cx="621.0" cy="975.4" r="11.1" fill="#FF5E62"/>
+<circle cx="728.9" cy="1020.1" r="11.1" fill="#FF7A5F"/>
+<circle cx="773.6" cy="1128.0" r="11.1" fill="#FF8C5A"/>
+<circle cx="728.9" cy="1235.9" r="11.1" fill="#FF9966"/>
+<circle cx="621.0" cy="1280.6" r="11.1" fill="#FF5E62"/>
+<circle cx="513.1" cy="1235.9" r="11.1" fill="#FF7A5F"/>
+<circle cx="468.4" cy="1128.0" r="11.1" fill="#FF8C5A"/>
+<circle cx="513.1" cy="1020.1" r="11.1" fill="#FF9966"/>
+<path d="M592.5 1079.2 L592.5 1176.8 L669.8 1128.0 Z" fill="url(#grad)"/>
+<text x="621" y="1379.46" text-anchor="middle" font-family="Arial,sans-serif" font-size="111" font-weight="700" letter-spacing="2" fill="#FFFFFF">CINE<tspan fill="#FF5E62">XA</tspan></text>
+<text x="621" y="1429.46" text-anchor="middle" font-family="Arial,sans-serif" font-size="27" letter-spacing="6" fill="#8A7F99">YOUR FILM UNIVERSE</text>
+</svg>
