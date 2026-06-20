@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../domain/enums.dart';
-import '../../../../domain/repositories/authentication_repository.dart';
+import '../../../../repositories.dart';
 import '../../../global/controllers/session_controller.dart';
 import '../../../routes/routes.dart';
 import '../controller/sign_in_controller.dart';
@@ -16,9 +17,7 @@ class SignInView extends StatelessWidget {
     // Registramos el SignInController para esta pantalla (lazy). Le inyectamos
     // el repositorio leyéndolo del provider global.
     return ChangeNotifierProvider(
-      create: (_) => SignInController(
-        context.read<AuthenticationRepository>(),
-      ),
+      create: (_) => SignInController(Repositories.authentication),
       child: const _SignInBody(),
     );
   }
@@ -45,7 +44,7 @@ class _SignInBody extends StatelessWidget {
       (user) {
         // Guardamos el usuario en el estado GLOBAL y navegamos.
         sessionController.setUser(user);
-        Navigator.pushReplacementNamed(context, Routes.home);
+        context.go(Routes.home);
       },
     );
   }

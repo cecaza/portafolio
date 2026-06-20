@@ -17,5 +17,9 @@ abstract class HomeState with _$HomeState {
     @Default(true) bool performersLoading,
     @Default(false) bool performersFailed,
     @Default(<Performer>[]) List<Performer> performers,
+    @Default(true) bool sectionsLoading,
+    @Default(false) bool sectionsFailed,
+    @Default(<MovieCategory, List<Movie>>{})
+    Map<MovieCategory, List<Movie>> sections,
   }) = _HomeState;
 }

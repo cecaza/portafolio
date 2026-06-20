@@ -43,6 +43,8 @@ dependencies:
   json_annotation: ^4.12.0
   flutter_svg: ^2.3.0
   shared_preferences: ^2.5.5
+  go_router: ^17.3.0
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +60,35 @@ dev_dependencies:
   freezed: ^4.0.0-dev.3
   json_serializable: ^6.14.0
   flutter_gen_runner: ^5.14.1
+  mockito: ^5.7.0
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
+
+# Genera el ícono de la app (móvil + web/PWA) a partir del logo de Cinexa.
+# Regenerar con: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/branding/icon/icon_gradient_bg_1024.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "assets/branding/icon/icon_gradient_bg_1024.png"
+    background_color: "#1A1426"
+    theme_color: "#FF5E62"
+  # Ícono adaptativo de Android 8+ (dos capas).
+  adaptive_icon_background: "assets/branding/icon/icon_bg_color.png"
+  adaptive_icon_foreground: "assets/branding/icon/icon_foreground_1024.png"
+
+# Pantalla de carga nativa (splash). Regenerar con:
+# dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#1A1426"
+  image: assets/branding/splash/splash_logo.png
+  android_12:
+    image: assets/branding/splash/splash_logo.png
+    color: "#1A1426"
+  web: false
 
 # Configuración de flutter_gen: genera referencias type-safe a los assets en
 # lib/gen/assets.gen.dart. Ejecuta `dart run build_runner build` para regenerar.

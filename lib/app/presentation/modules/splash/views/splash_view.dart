@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../gen/assets.gen.dart';
-import '../../../../domain/repositories/authentication_repository.dart';
-import '../../../../domain/repositories/connectivity_repository.dart';
+import '../../../../repositories.dart';
+import '../../../global/colors.dart';
 import '../../../global/controllers/session_controller.dart';
 import '../../../global/widgets/cinexa_loader.dart';
 import '../../../routes/routes.dart';
@@ -25,11 +26,9 @@ class _SplashViewState extends State<SplashView> {
   Future<void> _init() async {
     // Capturamos las dependencias ANTES de los await (buena práctica con
     // BuildContext en código asíncrono).
-    final connectivityRepository = context.read<ConnectivityRepository>();
-    final authenticationRepository = context.read<AuthenticationRepository>();
     final sessionController = context.read<SessionController>();
 
-    final hasInternet = await connectivityRepository.hasInternet;
+    final hasInternet = await Repositories.connectivity.hasInternet;
     if (!mounted) return;
 
     if (!hasInternet) {
@@ -37,7 +36,7 @@ class _SplashViewState extends State<SplashView> {
       return;
     }
 
-    final user = await authenticationRepository.getUserData();
+    final user = await Repositories.authentication.getUserData();
     if (!mounted) return;
 
     if (user != null) {
@@ -49,12 +48,15 @@ class _SplashViewState extends State<SplashView> {
   }
 
   void _goTo(String routeName) {
-    Navigator.pushReplacementNamed(context, routeName);
+    context.go(routeName);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // El splash siempre va en oscuro (identidad de Cinexa), sin importar
+      // el tema del sistema.
+      backgroundColor: CinexaColors.ink,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

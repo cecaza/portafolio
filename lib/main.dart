@@ -9,28 +9,31 @@ import 'app/config/constants.dart';
 import 'app/data/http/http.dart';
 import 'app/data/repositories_implementation/account_repository_impl.dart';
 import 'app/data/repositories_implementation/authentication_repository_impl.dart';
+import 'app/data/repositories_implementation/categories_repository_impl.dart';
 import 'app/data/repositories_implementation/connectivity_repository_impl.dart';
 import 'app/data/repositories_implementation/movie_repository_impl.dart';
 import 'app/data/repositories_implementation/performers_repository_impl.dart';
+import 'app/data/repositories_implementation/person_repository_impl.dart';
+import 'app/data/repositories_implementation/search_repository_impl.dart';
 import 'app/data/repositories_implementation/trending_repository_impl.dart';
 import 'app/data/services/remote/account_api.dart';
 import 'app/data/services/remote/authentication_api.dart';
+import 'app/data/services/remote/categories_service.dart';
 import 'app/data/services/remote/internet_checker.dart';
 import 'app/data/services/remote/movies_service.dart';
 import 'app/data/services/remote/performers_service.dart';
+import 'app/data/services/remote/person_service.dart';
+import 'app/data/services/remote/search_service.dart';
 import 'app/data/services/remote/trending_service.dart';
-import 'app/domain/repositories/account_repository.dart';
-import 'app/domain/repositories/authentication_repository.dart';
-import 'app/domain/repositories/connectivity_repository.dart';
-import 'app/domain/repositories/movie_repository.dart';
-import 'app/domain/repositories/performers_repository.dart';
-import 'app/domain/repositories/trending_repository.dart';
 import 'app/presentation/global/controllers/session_controller.dart';
 import 'app/presentation/global/controllers/theme_controller.dart';
+import 'app/presentation/global/pwa/pwa.dart';
 import 'app/my_app.dart';
+import 'app/repositories.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initPwa(); // escucha el evento de instalación en web (no-op en móvil)
   final prefs = await SharedPreferences.getInstance();
 
   const secureStorage = FlutterSecureStorage();
@@ -41,45 +44,31 @@ Future<void> main() async {
     accessToken: Constants.accessToken,
   );
 
+  // Inicializamos el Service Locator de repositorios.
+  Repositories.connectivity = ConnectivityRepositoryImpl(
+    Connectivity(),
+    InternetChecker(),
+  );
+  Repositories.authentication = AuthenticationRepositoryImpl(
+    secureStorage,
+    AuthenticationAPI(http),
+    AccountAPI(http),
+  );
+  Repositories.account = AccountRepositoryImpl(
+    secureStorage,
+    AccountAPI(http),
+  );
+  Repositories.trending = TrendingRepositoryImpl(TrendingService(http));
+  Repositories.categories =
+      CategoriesRepositoryImpl(CategoriesService(http));
+  Repositories.performers = PerformersRepositoryImpl(PerformersService(http));
+  Repositories.person = PersonRepositoryImpl(PersonService(http));
+  Repositories.movie = MovieRepositoryImpl(MoviesService(http), secureStorage);
+  Repositories.search = SearchRepositoryImpl(SearchService(http));
+
   runApp(
     MultiProvider(
       providers: [
-        // Repositorios (inyección de dependencias con provider).
-        Provider<ConnectivityRepository>(
-          create: (_) => ConnectivityRepositoryImpl(
-            Connectivity(),
-            InternetChecker(),
-          ),
-        ),
-        Provider<AuthenticationRepository>(
-          create: (_) => AuthenticationRepositoryImpl(
-            secureStorage,
-            AuthenticationAPI(http),
-            AccountAPI(http),
-          ),
-        ),
-        Provider<TrendingRepository>(
-          create: (_) => TrendingRepositoryImpl(
-            TrendingService(http),
-          ),
-        ),
-        Provider<PerformersRepository>(
-          create: (_) => PerformersRepositoryImpl(
-            PerformersService(http),
-          ),
-        ),
-        Provider<MovieRepository>(
-          create: (_) => MovieRepositoryImpl(
-            MoviesService(http),
-            secureStorage,
-          ),
-        ),
-        Provider<AccountRepository>(
-          create: (_) => AccountRepositoryImpl(
-            secureStorage,
-            AccountAPI(http),
-          ),
-        ),
         // Estado global de la sesión.
         ChangeNotifierProvider<SessionController>(
           create: (_) => SessionController(),

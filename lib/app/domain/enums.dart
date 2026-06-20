@@ -31,3 +31,20 @@ enum TimeWindow {
         TimeWindow.week => 'Esta semana',
       };
 }
+
+/// Listas de películas de TheMovieDB que se consultan con paginación.
+/// Endpoint: /3/movie/{path}?page=N
+enum MovieCategory {
+  nowPlaying('now_playing', 'En cartelera'),
+  topRated('top_rated', 'Mejor valoradas'),
+  upcoming('upcoming', 'Próximamente'),
+  popular('popular', 'Populares');
+
+  const MovieCategory(this.path, this.label);
+
+  /// Segmento del endpoint en la API.
+  final String path;
+
+  /// Etiqueta para mostrar en la UI.
+  final String label;
+}

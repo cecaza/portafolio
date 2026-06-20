@@ -28,6 +28,8 @@ mixin _$MovieDetail {
   @JsonKey(name: 'release_date')
   String? get releaseDate;
   int get runtime;
+  int get budget;
+  int get revenue;
   List<Genre> get genres;
   @JsonKey(name: 'credits', readValue: _readCast)
   List<Cast> get cast;
@@ -63,6 +65,8 @@ mixin _$MovieDetail {
             (identical(other.releaseDate, releaseDate) ||
                 other.releaseDate == releaseDate) &&
             (identical(other.runtime, runtime) || other.runtime == runtime) &&
+            (identical(other.budget, budget) || other.budget == budget) &&
+            (identical(other.revenue, revenue) || other.revenue == revenue) &&
             const DeepCollectionEquality().equals(other.genres, genres) &&
             const DeepCollectionEquality().equals(other.cast, cast) &&
             (identical(other.isFavorite, isFavorite) ||
@@ -82,13 +86,15 @@ mixin _$MovieDetail {
       voteAverage,
       releaseDate,
       runtime,
+      budget,
+      revenue,
       const DeepCollectionEquality().hash(genres),
       const DeepCollectionEquality().hash(cast),
       isFavorite);
 
   @override
   String toString() {
-    return 'MovieDetail(id: $id, title: $title, overview: $overview, tagline: $tagline, backdropPath: $backdropPath, posterPath: $posterPath, voteAverage: $voteAverage, releaseDate: $releaseDate, runtime: $runtime, genres: $genres, cast: $cast, isFavorite: $isFavorite)';
+    return 'MovieDetail(id: $id, title: $title, overview: $overview, tagline: $tagline, backdropPath: $backdropPath, posterPath: $posterPath, voteAverage: $voteAverage, releaseDate: $releaseDate, runtime: $runtime, budget: $budget, revenue: $revenue, genres: $genres, cast: $cast, isFavorite: $isFavorite)';
   }
 }
 
@@ -108,6 +114,8 @@ abstract mixin class $MovieDetailCopyWith<$Res> {
       @JsonKey(name: 'vote_average') double voteAverage,
       @JsonKey(name: 'release_date') String? releaseDate,
       int runtime,
+      int budget,
+      int revenue,
       List<Genre> genres,
       @JsonKey(name: 'credits', readValue: _readCast) List<Cast> cast,
       @JsonKey(name: 'account_states', readValue: _readFavorite)
@@ -135,6 +143,8 @@ class _$MovieDetailCopyWithImpl<$Res> implements $MovieDetailCopyWith<$Res> {
     Object? voteAverage = null,
     Object? releaseDate = freezed,
     Object? runtime = null,
+    Object? budget = null,
+    Object? revenue = null,
     Object? genres = null,
     Object? cast = null,
     Object? isFavorite = null,
@@ -175,6 +185,14 @@ class _$MovieDetailCopyWithImpl<$Res> implements $MovieDetailCopyWith<$Res> {
       runtime: null == runtime
           ? _self.runtime
           : runtime // ignore: cast_nullable_to_non_nullable
+              as int,
+      budget: null == budget
+          ? _self.budget
+          : budget // ignore: cast_nullable_to_non_nullable
+              as int,
+      revenue: null == revenue
+          ? _self.revenue
+          : revenue // ignore: cast_nullable_to_non_nullable
               as int,
       genres: null == genres
           ? _self.genres
@@ -295,6 +313,8 @@ extension MovieDetailPatterns on MovieDetail {
             @JsonKey(name: 'vote_average') double voteAverage,
             @JsonKey(name: 'release_date') String? releaseDate,
             int runtime,
+            int budget,
+            int revenue,
             List<Genre> genres,
             @JsonKey(name: 'credits', readValue: _readCast) List<Cast> cast,
             @JsonKey(name: 'account_states', readValue: _readFavorite)
@@ -315,6 +335,8 @@ extension MovieDetailPatterns on MovieDetail {
             _that.voteAverage,
             _that.releaseDate,
             _that.runtime,
+            _that.budget,
+            _that.revenue,
             _that.genres,
             _that.cast,
             _that.isFavorite);
@@ -348,6 +370,8 @@ extension MovieDetailPatterns on MovieDetail {
             @JsonKey(name: 'vote_average') double voteAverage,
             @JsonKey(name: 'release_date') String? releaseDate,
             int runtime,
+            int budget,
+            int revenue,
             List<Genre> genres,
             @JsonKey(name: 'credits', readValue: _readCast) List<Cast> cast,
             @JsonKey(name: 'account_states', readValue: _readFavorite)
@@ -367,6 +391,8 @@ extension MovieDetailPatterns on MovieDetail {
             _that.voteAverage,
             _that.releaseDate,
             _that.runtime,
+            _that.budget,
+            _that.revenue,
             _that.genres,
             _that.cast,
             _that.isFavorite);
@@ -399,6 +425,8 @@ extension MovieDetailPatterns on MovieDetail {
             @JsonKey(name: 'vote_average') double voteAverage,
             @JsonKey(name: 'release_date') String? releaseDate,
             int runtime,
+            int budget,
+            int revenue,
             List<Genre> genres,
             @JsonKey(name: 'credits', readValue: _readCast) List<Cast> cast,
             @JsonKey(name: 'account_states', readValue: _readFavorite)
@@ -418,6 +446,8 @@ extension MovieDetailPatterns on MovieDetail {
             _that.voteAverage,
             _that.releaseDate,
             _that.runtime,
+            _that.budget,
+            _that.revenue,
             _that.genres,
             _that.cast,
             _that.isFavorite);
@@ -440,6 +470,8 @@ class _MovieDetail implements MovieDetail {
       @JsonKey(name: 'vote_average') this.voteAverage = 0.0,
       @JsonKey(name: 'release_date') this.releaseDate,
       this.runtime = 0,
+      this.budget = 0,
+      this.revenue = 0,
       List<Genre> genres = const <Genre>[],
       @JsonKey(name: 'credits', readValue: _readCast)
       List<Cast> cast = const <Cast>[],
@@ -476,6 +508,12 @@ class _MovieDetail implements MovieDetail {
   @override
   @JsonKey()
   final int runtime;
+  @override
+  @JsonKey()
+  final int budget;
+  @override
+  @JsonKey()
+  final int revenue;
   final List<Genre> _genres;
   @override
   @JsonKey()
@@ -532,6 +570,8 @@ class _MovieDetail implements MovieDetail {
             (identical(other.releaseDate, releaseDate) ||
                 other.releaseDate == releaseDate) &&
             (identical(other.runtime, runtime) || other.runtime == runtime) &&
+            (identical(other.budget, budget) || other.budget == budget) &&
+            (identical(other.revenue, revenue) || other.revenue == revenue) &&
             const DeepCollectionEquality().equals(other._genres, _genres) &&
             const DeepCollectionEquality().equals(other._cast, _cast) &&
             (identical(other.isFavorite, isFavorite) ||
@@ -551,13 +591,15 @@ class _MovieDetail implements MovieDetail {
       voteAverage,
       releaseDate,
       runtime,
+      budget,
+      revenue,
       const DeepCollectionEquality().hash(_genres),
       const DeepCollectionEquality().hash(_cast),
       isFavorite);
 
   @override
   String toString() {
-    return 'MovieDetail(id: $id, title: $title, overview: $overview, tagline: $tagline, backdropPath: $backdropPath, posterPath: $posterPath, voteAverage: $voteAverage, releaseDate: $releaseDate, runtime: $runtime, genres: $genres, cast: $cast, isFavorite: $isFavorite)';
+    return 'MovieDetail(id: $id, title: $title, overview: $overview, tagline: $tagline, backdropPath: $backdropPath, posterPath: $posterPath, voteAverage: $voteAverage, releaseDate: $releaseDate, runtime: $runtime, budget: $budget, revenue: $revenue, genres: $genres, cast: $cast, isFavorite: $isFavorite)';
   }
 }
 
@@ -579,6 +621,8 @@ abstract mixin class _$MovieDetailCopyWith<$Res>
       @JsonKey(name: 'vote_average') double voteAverage,
       @JsonKey(name: 'release_date') String? releaseDate,
       int runtime,
+      int budget,
+      int revenue,
       List<Genre> genres,
       @JsonKey(name: 'credits', readValue: _readCast) List<Cast> cast,
       @JsonKey(name: 'account_states', readValue: _readFavorite)
@@ -606,6 +650,8 @@ class __$MovieDetailCopyWithImpl<$Res> implements _$MovieDetailCopyWith<$Res> {
     Object? voteAverage = null,
     Object? releaseDate = freezed,
     Object? runtime = null,
+    Object? budget = null,
+    Object? revenue = null,
     Object? genres = null,
     Object? cast = null,
     Object? isFavorite = null,
@@ -646,6 +692,14 @@ class __$MovieDetailCopyWithImpl<$Res> implements _$MovieDetailCopyWith<$Res> {
       runtime: null == runtime
           ? _self.runtime
           : runtime // ignore: cast_nullable_to_non_nullable
+              as int,
+      budget: null == budget
+          ? _self.budget
+          : budget // ignore: cast_nullable_to_non_nullable
+              as int,
+      revenue: null == revenue
+          ? _self.revenue
+          : revenue // ignore: cast_nullable_to_non_nullable
               as int,
       genres: null == genres
           ? _self._genres

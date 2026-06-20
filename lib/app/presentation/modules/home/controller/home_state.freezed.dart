@@ -22,6 +22,9 @@ mixin _$HomeState {
   bool get performersLoading;
   bool get performersFailed;
   List<Performer> get performers;
+  bool get sectionsLoading;
+  bool get sectionsFailed;
+  Map<MovieCategory, List<Movie>> get sections;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -47,7 +50,12 @@ mixin _$HomeState {
             (identical(other.performersFailed, performersFailed) ||
                 other.performersFailed == performersFailed) &&
             const DeepCollectionEquality()
-                .equals(other.performers, performers));
+                .equals(other.performers, performers) &&
+            (identical(other.sectionsLoading, sectionsLoading) ||
+                other.sectionsLoading == sectionsLoading) &&
+            (identical(other.sectionsFailed, sectionsFailed) ||
+                other.sectionsFailed == sectionsFailed) &&
+            const DeepCollectionEquality().equals(other.sections, sections));
   }
 
   @override
@@ -59,11 +67,14 @@ mixin _$HomeState {
       const DeepCollectionEquality().hash(movies),
       performersLoading,
       performersFailed,
-      const DeepCollectionEquality().hash(performers));
+      const DeepCollectionEquality().hash(performers),
+      sectionsLoading,
+      sectionsFailed,
+      const DeepCollectionEquality().hash(sections));
 
   @override
   String toString() {
-    return 'HomeState(timeWindow: $timeWindow, moviesLoading: $moviesLoading, moviesFailed: $moviesFailed, movies: $movies, performersLoading: $performersLoading, performersFailed: $performersFailed, performers: $performers)';
+    return 'HomeState(timeWindow: $timeWindow, moviesLoading: $moviesLoading, moviesFailed: $moviesFailed, movies: $movies, performersLoading: $performersLoading, performersFailed: $performersFailed, performers: $performers, sectionsLoading: $sectionsLoading, sectionsFailed: $sectionsFailed, sections: $sections)';
   }
 }
 
@@ -79,7 +90,10 @@ abstract mixin class $HomeStateCopyWith<$Res> {
       List<Movie> movies,
       bool performersLoading,
       bool performersFailed,
-      List<Performer> performers});
+      List<Performer> performers,
+      bool sectionsLoading,
+      bool sectionsFailed,
+      Map<MovieCategory, List<Movie>> sections});
 }
 
 /// @nodoc
@@ -101,6 +115,9 @@ class _$HomeStateCopyWithImpl<$Res> implements $HomeStateCopyWith<$Res> {
     Object? performersLoading = null,
     Object? performersFailed = null,
     Object? performers = null,
+    Object? sectionsLoading = null,
+    Object? sectionsFailed = null,
+    Object? sections = null,
   }) {
     return _then(HomeState(
       timeWindow: null == timeWindow
@@ -131,6 +148,18 @@ class _$HomeStateCopyWithImpl<$Res> implements $HomeStateCopyWith<$Res> {
           ? _self.performers
           : performers // ignore: cast_nullable_to_non_nullable
               as List<Performer>,
+      sectionsLoading: null == sectionsLoading
+          ? _self.sectionsLoading
+          : sectionsLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      sectionsFailed: null == sectionsFailed
+          ? _self.sectionsFailed
+          : sectionsFailed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      sections: null == sections
+          ? _self.sections
+          : sections // ignore: cast_nullable_to_non_nullable
+              as Map<MovieCategory, List<Movie>>,
     ));
   }
 }
@@ -235,7 +264,10 @@ extension HomeStatePatterns on HomeState {
             List<Movie> movies,
             bool performersLoading,
             bool performersFailed,
-            List<Performer> performers)?
+            List<Performer> performers,
+            bool sectionsLoading,
+            bool sectionsFailed,
+            Map<MovieCategory, List<Movie>> sections)?
         $default, {
     required TResult orElse(),
   }) {
@@ -249,7 +281,10 @@ extension HomeStatePatterns on HomeState {
             _that.movies,
             _that.performersLoading,
             _that.performersFailed,
-            _that.performers);
+            _that.performers,
+            _that.sectionsLoading,
+            _that.sectionsFailed,
+            _that.sections);
       case _:
         return orElse();
     }
@@ -277,7 +312,10 @@ extension HomeStatePatterns on HomeState {
             List<Movie> movies,
             bool performersLoading,
             bool performersFailed,
-            List<Performer> performers)
+            List<Performer> performers,
+            bool sectionsLoading,
+            bool sectionsFailed,
+            Map<MovieCategory, List<Movie>> sections)
         $default,
   ) {
     final _that = this;
@@ -290,7 +328,10 @@ extension HomeStatePatterns on HomeState {
             _that.movies,
             _that.performersLoading,
             _that.performersFailed,
-            _that.performers);
+            _that.performers,
+            _that.sectionsLoading,
+            _that.sectionsFailed,
+            _that.sections);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -317,7 +358,10 @@ extension HomeStatePatterns on HomeState {
             List<Movie> movies,
             bool performersLoading,
             bool performersFailed,
-            List<Performer> performers)?
+            List<Performer> performers,
+            bool sectionsLoading,
+            bool sectionsFailed,
+            Map<MovieCategory, List<Movie>> sections)?
         $default,
   ) {
     final _that = this;
@@ -330,7 +374,10 @@ extension HomeStatePatterns on HomeState {
             _that.movies,
             _that.performersLoading,
             _that.performersFailed,
-            _that.performers);
+            _that.performers,
+            _that.sectionsLoading,
+            _that.sectionsFailed,
+            _that.sections);
       case _:
         return null;
     }
@@ -347,9 +394,14 @@ class _HomeState implements HomeState {
       List<Movie> movies = const <Movie>[],
       this.performersLoading = true,
       this.performersFailed = false,
-      List<Performer> performers = const <Performer>[]})
+      List<Performer> performers = const <Performer>[],
+      this.sectionsLoading = true,
+      this.sectionsFailed = false,
+      Map<MovieCategory, List<Movie>> sections =
+          const <MovieCategory, List<Movie>>{}})
       : _movies = movies,
-        _performers = performers;
+        _performers = performers,
+        _sections = sections;
 
   @override
   @JsonKey()
@@ -384,6 +436,21 @@ class _HomeState implements HomeState {
     return EqualUnmodifiableListView(_performers);
   }
 
+  @override
+  @JsonKey()
+  final bool sectionsLoading;
+  @override
+  @JsonKey()
+  final bool sectionsFailed;
+  final Map<MovieCategory, List<Movie>> _sections;
+  @override
+  @JsonKey()
+  Map<MovieCategory, List<Movie>> get sections {
+    if (_sections is EqualUnmodifiableMapView) return _sections;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_sections);
+  }
+
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -409,7 +476,12 @@ class _HomeState implements HomeState {
             (identical(other.performersFailed, performersFailed) ||
                 other.performersFailed == performersFailed) &&
             const DeepCollectionEquality()
-                .equals(other._performers, _performers));
+                .equals(other._performers, _performers) &&
+            (identical(other.sectionsLoading, sectionsLoading) ||
+                other.sectionsLoading == sectionsLoading) &&
+            (identical(other.sectionsFailed, sectionsFailed) ||
+                other.sectionsFailed == sectionsFailed) &&
+            const DeepCollectionEquality().equals(other._sections, _sections));
   }
 
   @override
@@ -421,11 +493,14 @@ class _HomeState implements HomeState {
       const DeepCollectionEquality().hash(_movies),
       performersLoading,
       performersFailed,
-      const DeepCollectionEquality().hash(_performers));
+      const DeepCollectionEquality().hash(_performers),
+      sectionsLoading,
+      sectionsFailed,
+      const DeepCollectionEquality().hash(_sections));
 
   @override
   String toString() {
-    return 'HomeState(timeWindow: $timeWindow, moviesLoading: $moviesLoading, moviesFailed: $moviesFailed, movies: $movies, performersLoading: $performersLoading, performersFailed: $performersFailed, performers: $performers)';
+    return 'HomeState(timeWindow: $timeWindow, moviesLoading: $moviesLoading, moviesFailed: $moviesFailed, movies: $movies, performersLoading: $performersLoading, performersFailed: $performersFailed, performers: $performers, sectionsLoading: $sectionsLoading, sectionsFailed: $sectionsFailed, sections: $sections)';
   }
 }
 
@@ -444,7 +519,10 @@ abstract mixin class _$HomeStateCopyWith<$Res>
       List<Movie> movies,
       bool performersLoading,
       bool performersFailed,
-      List<Performer> performers});
+      List<Performer> performers,
+      bool sectionsLoading,
+      bool sectionsFailed,
+      Map<MovieCategory, List<Movie>> sections});
 }
 
 /// @nodoc
@@ -466,6 +544,9 @@ class __$HomeStateCopyWithImpl<$Res> implements _$HomeStateCopyWith<$Res> {
     Object? performersLoading = null,
     Object? performersFailed = null,
     Object? performers = null,
+    Object? sectionsLoading = null,
+    Object? sectionsFailed = null,
+    Object? sections = null,
   }) {
     return _then(_HomeState(
       timeWindow: null == timeWindow
@@ -496,6 +577,18 @@ class __$HomeStateCopyWithImpl<$Res> implements _$HomeStateCopyWith<$Res> {
           ? _self._performers
           : performers // ignore: cast_nullable_to_non_nullable
               as List<Performer>,
+      sectionsLoading: null == sectionsLoading
+          ? _self.sectionsLoading
+          : sectionsLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      sectionsFailed: null == sectionsFailed
+          ? _self.sectionsFailed
+          : sectionsFailed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      sections: null == sections
+          ? _self._sections
+          : sections // ignore: cast_nullable_to_non_nullable
+              as Map<MovieCategory, List<Movie>>,
     ));
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../config/constants.dart';
-import '../../../../domain/repositories/authentication_repository.dart';
+import '../../../../repositories.dart';
 import '../../../global/colors.dart';
 import '../../../global/controllers/session_controller.dart';
 import '../../../global/controllers/theme_controller.dart';
@@ -12,13 +13,13 @@ class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
   Future<void> _signOut(BuildContext context) async {
-    final authenticationRepository = context.read<AuthenticationRepository>();
     final sessionController = context.read<SessionController>();
-    final navigator = Navigator.of(context);
 
-    await authenticationRepository.signOut();
+    await Repositories.authentication.signOut();
     sessionController.clear();
-    navigator.pushNamedAndRemoveUntil(Routes.signIn, (_) => false);
+    if (context.mounted) {
+      context.go(Routes.signIn);
+    }
   }
 
   @override

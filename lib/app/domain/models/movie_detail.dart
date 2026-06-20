@@ -16,6 +16,8 @@ abstract class MovieDetail with _$MovieDetail {
     @JsonKey(name: 'vote_average') @Default(0.0) double voteAverage,
     @JsonKey(name: 'release_date') String? releaseDate,
     @Default(0) int runtime,
+    @Default(0) int budget,
+    @Default(0) int revenue,
     @Default(<Genre>[]) List<Genre> genres,
     // El reparto viene anidado en credits.cast (append_to_response=credits).
     @JsonKey(name: 'credits', readValue: _readCast)

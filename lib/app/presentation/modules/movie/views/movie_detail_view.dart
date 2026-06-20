@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../gen/assets.gen.dart';
@@ -6,8 +7,7 @@ import '../../../../config/constants.dart';
 import '../../../../domain/either/either.dart';
 import '../../../../domain/enums.dart';
 import '../../../../domain/models/movie_detail.dart';
-import '../../../../domain/repositories/account_repository.dart';
-import '../../../../domain/repositories/movie_repository.dart';
+import '../../../../repositories.dart';
 import '../../../global/colors.dart';
 import '../../../global/controllers/session_controller.dart';
 import '../../../global/widgets/cinexa_loader.dart';
@@ -29,12 +29,12 @@ class _MovieDetailViewState extends State<MovieDetailView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _future ??= context.read<MovieRepository>().getById(widget.movieId);
+    _future ??= Repositories.movie.getById(widget.movieId);
   }
 
   void _reload() {
     setState(() {
-      _future = context.read<MovieRepository>().getById(widget.movieId);
+      _future = Repositories.movie.getById(widget.movieId);
     });
   }
 
@@ -80,11 +80,10 @@ class _MovieDetailBodyState extends State<_MovieDetailBody> {
     final accountId = context.read<SessionController>().user?.id;
     if (accountId == null) return;
 
-    final accountRepository = context.read<AccountRepository>();
     final newValue = !_isFavorite;
 
     ProgressDialog.show(context);
-    final result = await accountRepository.markAsFavorite(
+    final result = await Repositories.account.markAsFavorite(
       accountId,
       widget.movie.id,
       newValue,
@@ -127,7 +126,7 @@ class _MovieDetailBodyState extends State<_MovieDetailBody> {
           backgroundColor: CinexaColors.deep,
           leading: _CircleButton(
             icon: Icons.arrow_back,
-            onTap: () => Navigator.pop(context),
+            onTap: () => context.pop(),
           ),
           actions: [
             _CircleButton(
@@ -138,13 +137,41 @@ class _MovieDetailBodyState extends State<_MovieDetailBody> {
             const SizedBox(width: 8),
           ],
           flexibleSpace: FlexibleSpaceBar(
-            background: backdrop != null
-                ? Image.network(
+            background: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (backdrop != null)
+                  Image.network(
                     '${Constants.imagesBaseUrl}$backdrop',
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => _backdropPlaceholder(),
                   )
-                : _backdropPlaceholder(),
+                else
+                  _backdropPlaceholder(),
+                // Degradado para legibilidad.
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.center,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.transparent, Colors.black54],
+                    ),
+                  ),
+                ),
+                // Calificación, en la esquina inferior izquierda.
+                Positioned(
+                  left: 16,
+                  bottom: 12,
+                  child: _RatingCircle(value: movie.voteAverage),
+                ),
+                // Año + duración, en la esquina inferior derecha.
+                Positioned(
+                  right: 12,
+                  bottom: 12,
+                  child: _InfoOverlay(year: year, runtime: movie.runtime),
+                ),
+              ],
+            ),
           ),
         ),
         SliverToBoxAdapter(
@@ -153,37 +180,25 @@ class _MovieDetailBodyState extends State<_MovieDetailBody> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            movie.title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          if (movie.tagline.isNotEmpty) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              movie.tagline,
-                              style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: CinexaColors.muted,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    _RatingCircle(value: movie.voteAverage),
-                  ],
+                Text(
+                  movie.title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
+                if (movie.tagline.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    movie.tagline,
+                    style: const TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: CinexaColors.muted,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                _MoneyRow(budget: movie.budget, revenue: movie.revenue),
                 const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
@@ -196,22 +211,6 @@ class _MovieDetailBodyState extends State<_MovieDetailBody> {
                         ),
                       )
                       .toList(),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    if (year.isNotEmpty) ...[
-                      const Icon(Icons.calendar_today, size: 15),
-                      const SizedBox(width: 4),
-                      Text(year),
-                      const SizedBox(width: 16),
-                    ],
-                    if (movie.runtime > 0) ...[
-                      const Icon(Icons.schedule, size: 16),
-                      const SizedBox(width: 4),
-                      Text('${movie.runtime} min'),
-                    ],
-                  ],
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -282,25 +281,37 @@ class _CircleButton extends StatelessWidget {
 class _RatingCircle extends StatelessWidget {
   const _RatingCircle({required this.value});
 
+  /// Calificación de 0 a 10.
   final double value;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 56,
-      height: 56,
+    return Container(
+      width: 54,
+      height: 54,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: CinexaColors.deep.withValues(alpha: 0.85),
+      ),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CircularProgressIndicator(
-            value: value / 10,
-            strokeWidth: 4,
-            backgroundColor: CinexaColors.faint,
-            valueColor: const AlwaysStoppedAnimation(CinexaColors.coral),
+          SizedBox(
+            width: 44,
+            height: 44,
+            child: CircularProgressIndicator(
+              value: value / 10,
+              strokeWidth: 4,
+              backgroundColor: CinexaColors.faint,
+              valueColor: const AlwaysStoppedAnimation(CinexaColors.coral),
+            ),
           ),
           Text(
             value.toStringAsFixed(1),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -345,4 +356,118 @@ class _CastAvatar extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Pastilla con año + duración, sobre el backdrop.
+class _InfoOverlay extends StatelessWidget {
+  const _InfoOverlay({required this.year, required this.runtime});
+
+  final String year;
+  final int runtime;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (year.isNotEmpty) ...[
+            const Icon(Icons.calendar_today, size: 14, color: Colors.white),
+            const SizedBox(width: 4),
+            Text(year,
+                style: const TextStyle(color: Colors.white, fontSize: 13)),
+          ],
+          if (year.isNotEmpty && runtime > 0) const SizedBox(width: 12),
+          if (runtime > 0) ...[
+            const Icon(Icons.schedule, size: 15, color: Colors.white),
+            const SizedBox(width: 4),
+            Text('$runtime min',
+                style: const TextStyle(color: Colors.white, fontSize: 13)),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Fila con presupuesto y recaudación.
+class _MoneyRow extends StatelessWidget {
+  const _MoneyRow({required this.budget, required this.revenue});
+
+  final int budget;
+  final int revenue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _MoneyItem(
+            icon: Icons.payments_outlined,
+            label: 'Presupuesto',
+            value: _money(budget),
+          ),
+        ),
+        Expanded(
+          child: _MoneyItem(
+            icon: Icons.attach_money,
+            label: 'Recaudó',
+            value: _money(revenue),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MoneyItem extends StatelessWidget {
+  const _MoneyItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: CinexaColors.coral),
+        const SizedBox(width: 6),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label,
+                style:
+                    const TextStyle(fontSize: 11, color: CinexaColors.muted)),
+            Text(value,
+                style: const TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.w600)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Formatea un entero como dinero con separadores de miles: 1000000 -> $1,000,000
+String _money(int value) {
+  if (value <= 0) return 'N/D';
+  final digits = value.toString();
+  final buffer = StringBuffer();
+  for (var i = 0; i < digits.length; i++) {
+    if (i > 0 && (digits.length - i) % 3 == 0) {
+      buffer.write(',');
+    }
+    buffer.write(digits[i]);
+  }
+  return '\$$buffer';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../gen/assets.gen.dart';
@@ -6,7 +7,7 @@ import '../../../../config/constants.dart';
 import '../../../../domain/either/either.dart';
 import '../../../../domain/enums.dart';
 import '../../../../domain/models/movie.dart';
-import '../../../../domain/repositories/account_repository.dart';
+import '../../../../repositories.dart';
 import '../../../global/colors.dart';
 import '../../../global/controllers/session_controller.dart';
 import '../../../global/widgets/cinexa_loader.dart';
@@ -31,7 +32,7 @@ class _FavoritesViewState extends State<FavoritesView> {
 
   Future<Either<HttpFailureType, List<Movie>>> _fetch() {
     final accountId = context.read<SessionController>().user?.id ?? 0;
-    return context.read<AccountRepository>().getFavorites(accountId);
+    return Repositories.account.getFavorites(accountId);
   }
 
   Future<void> _refresh() async {
@@ -68,8 +69,8 @@ class _FavoritesViewState extends State<FavoritesView> {
                   padding: const EdgeInsets.all(12),
                   physics: const AlwaysScrollableScrollPhysics(),
                   gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
+                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 150,
                     childAspectRatio: 0.55,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
@@ -95,11 +96,7 @@ class _FavoritePoster extends StatelessWidget {
   Widget build(BuildContext context) {
     final posterPath = movie.posterPath;
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        Routes.movie,
-        arguments: movie.id,
-      ),
+      onTap: () => context.push('${Routes.movie}/${movie.id}'),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: posterPath != null

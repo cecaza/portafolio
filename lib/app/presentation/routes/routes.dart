@@ -6,7 +6,9 @@ class Routes {
   static const home = '/home';
   static const offline = '/offline';
   static const movie = '/movie';
+  static const person = '/person';
   static const favorites = '/favorites';
   static const profile = '/profile';
-  
+  static const search = '/search';
+  static const category = '/category';
 }
