@@ -147,7 +147,6 @@ class _MatchRoomViewState extends State<MatchRoomView> {
     return SwipeDeck(
       key: _deckKey,
       cards: deck,
-      partnerLikedIds: controller.partnerLikedIds,
       onSwipe: (movie, {required bool liked}) =>
           controller.swipe(movie, liked: liked),
     );

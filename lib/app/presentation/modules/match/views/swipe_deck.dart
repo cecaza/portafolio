@@ -13,15 +13,11 @@ class SwipeDeck extends StatefulWidget {
     super.key,
     required this.cards,
     required this.onSwipe,
-    this.partnerLikedIds = const {},
   });
 
   /// Cartas pendientes; la posición 0 es la de arriba.
   final List<Movie> cards;
   final void Function(Movie movie, {required bool liked}) onSwipe;
-
-  /// Ids que la pareja ya likeó (se marcan con un distintivo).
-  final Set<int> partnerLikedIds;
 
   @override
   State<SwipeDeck> createState() => SwipeDeckState();
@@ -122,10 +118,7 @@ class SwipeDeckState extends State<SwipeDeck>
             if (cards.length > 1)
               Transform.scale(
                 scale: 0.94,
-                child: _Card(
-                  movie: cards[1],
-                  isPartnerLiked: widget.partnerLikedIds.contains(cards[1].id),
-                ),
+                child: _Card(movie: cards[1]),
               ),
             // Carta superior, arrastrable.
             Transform.translate(
@@ -139,8 +132,6 @@ class SwipeDeckState extends State<SwipeDeck>
                     movie: cards.first,
                     likeOpacity: likeOpacity,
                     nopeOpacity: nopeOpacity,
-                    isPartnerLiked:
-                        widget.partnerLikedIds.contains(cards.first.id),
                   ),
                 ),
               ),
@@ -157,13 +148,11 @@ class _Card extends StatelessWidget {
     required this.movie,
     this.likeOpacity = 0,
     this.nopeOpacity = 0,
-    this.isPartnerLiked = false,
   });
 
   final Movie movie;
   final double likeOpacity;
   final double nopeOpacity;
-  final bool isPartnerLiked;
 
   @override
   Widget build(BuildContext context) {
@@ -260,31 +249,6 @@ class _Card extends StatelessWidget {
               angle: 0.4,
             ),
           ),
-          // Distintivo: a tu pareja ya le gustó (si tú le das ❤️, ¡match!).
-          if (isPartnerLiked)
-            Positioned(
-              top: 14,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    gradient: CinexaColors.brandGradient,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    '🔥 A tu pareja le gustó',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );

@@ -61,9 +61,6 @@ class MatchController extends ChangeNotifier {
     return result;
   }
 
-  /// Ids que mi pareja ya likeó (para marcarlos "🔥" en el mazo).
-  Set<int> get partnerLikedIds => _partnerLikes.map((m) => m.id).toSet();
-
   /// Cuántas cartas quedan del pool propio (sin contar las de la pareja), para
   /// decidir si recargar más sugerencias.
   int get _poolRemaining =>
