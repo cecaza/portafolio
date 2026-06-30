@@ -35,6 +35,10 @@ abstract class MatchRepository {
   /// deck), en tiempo real.
   Stream<Set<int>> watchSwipedIds(String roomId, String uid);
 
+  /// Películas que los OTROS miembros ya likearon (con datos), para priorizarlas
+  /// en el mazo y acelerar los matches.
+  Stream<List<Movie>> watchPartnerLikes(String roomId, String uid);
+
   /// Registra un swipe. Si ambos miembros dieron like a la misma película,
   /// crea el match de forma atómica. Devuelve true si este swipe generó match.
   Future<bool> swipe(String roomId, Movie movie, {required bool liked});

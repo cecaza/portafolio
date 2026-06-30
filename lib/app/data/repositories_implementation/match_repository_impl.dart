@@ -47,6 +47,10 @@ class MatchRepositoryImpl implements MatchRepository {
       _service.watchSwipedIds(roomId, uid);
 
   @override
+  Stream<List<Movie>> watchPartnerLikes(String roomId, String uid) =>
+      _service.watchPartnerLikes(roomId, uid);
+
+  @override
   Future<bool> swipe(String roomId, Movie movie, {required bool liked}) =>
       _service.swipe(roomId, movie, liked: liked);
 

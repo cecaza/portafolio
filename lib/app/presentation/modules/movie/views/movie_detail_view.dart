@@ -6,12 +6,12 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../config/constants.dart';
 import '../../../../domain/either/either.dart';
 import '../../../../domain/enums.dart';
+import '../../../../domain/models/movie.dart';
 import '../../../../domain/models/movie_detail.dart';
 import '../../../../repositories.dart';
 import '../../../global/colors.dart';
-import '../../../global/controllers/session_controller.dart';
+import '../../../global/controllers/favorites_controller.dart';
 import '../../../global/widgets/cinexa_loader.dart';
-import '../../../global/widgets/progress_dialog.dart';
 import '../../../global/widgets/request_failed.dart';
 
 class MovieDetailView extends StatefulWidget {
@@ -74,45 +74,31 @@ class _MovieDetailBody extends StatefulWidget {
 }
 
 class _MovieDetailBodyState extends State<_MovieDetailBody> {
-  late bool _isFavorite = widget.movie.isFavorite;
-
   Future<void> _toggleFavorite() async {
-    final accountId = context.read<SessionController>().user?.id;
-    if (accountId == null) return;
-
-    final newValue = !_isFavorite;
-
-    ProgressDialog.show(context);
-    final result = await Repositories.account.markAsFavorite(
-      accountId,
-      widget.movie.id,
-      newValue,
-    );
-    if (!mounted) return;
-    ProgressDialog.close(context);
-
-    result.when(
-      (_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo actualizar el favorito')),
-        );
-      },
-      (_) {
-        setState(() => _isFavorite = newValue);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              newValue ? 'Agregada a favoritos' : 'Quitada de favoritos',
-            ),
+    final m = widget.movie;
+    final added = await context.read<FavoritesController>().toggle(
+          Movie(
+            id: m.id,
+            title: m.title,
+            overview: m.overview,
+            posterPath: m.posterPath,
+            backdropPath: m.backdropPath,
+            voteAverage: m.voteAverage,
+            releaseDate: m.releaseDate,
           ),
         );
-      },
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(added ? 'Agregada a favoritos' : 'Quitada de favoritos'),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final movie = widget.movie;
+    final isFav = context.watch<FavoritesController>().isFavorite(movie.id);
     final backdrop = movie.backdropPath;
     final year = (movie.releaseDate ?? '').length >= 4
         ? movie.releaseDate!.substring(0, 4)
@@ -130,8 +116,8 @@ class _MovieDetailBodyState extends State<_MovieDetailBody> {
           ),
           actions: [
             _CircleButton(
-              icon: _isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: _isFavorite ? CinexaColors.coral : Colors.white,
+              icon: isFav ? Icons.favorite : Icons.favorite_border,
+              color: isFav ? CinexaColors.coral : Colors.white,
               onTap: _toggleFavorite,
             ),
             const SizedBox(width: 8),

@@ -122,6 +122,28 @@ class FirestoreMatchService {
         );
   }
 
+  /// Películas a las que los OTROS miembros ya dieron like (con sus datos),
+  /// para poder mostrarlas primero en mi mazo y hacer match rápido.
+  Stream<List<Movie>> watchPartnerLikes(String roomId, String uid) {
+    return _rooms
+        .doc(roomId)
+        .collection('swipes')
+        .where('liked', isEqualTo: true)
+        .snapshots()
+        .map((snap) {
+      final seen = <int>{};
+      final movies = <Movie>[];
+      for (final d in snap.docs) {
+        final data = d.data();
+        if (data['uid'] == uid) continue; // los míos no
+        final id = data['movieId'] as int;
+        if (!seen.add(id)) continue;
+        movies.add(Movie.fromJson(data['movie'] as Map<String, dynamic>));
+      }
+      return movies;
+    });
+  }
+
   Stream<Set<int>> watchSwipedIds(String roomId, String uid) {
     return _rooms
         .doc(roomId)

@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../config/constants.dart';
-import '../../../../repositories.dart';
 import '../../../global/colors.dart';
-import '../../../global/controllers/session_controller.dart';
 import '../../../global/controllers/theme_controller.dart';
-import '../../../routes/routes.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -35,55 +30,41 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Future<void> _signOut(BuildContext context) async {
-    final sessionController = context.read<SessionController>();
-
-    await Repositories.authentication.signOut();
-    sessionController.clear();
-    if (context.mounted) {
-      context.go(Routes.home);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<SessionController>().user;
     final themeController = context.watch<ThemeController>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil')),
       body: ListView(
         children: [
-          const SizedBox(height: 24),
-          // Avatar + nombre.
+          const SizedBox(height: 32),
+          // Encabezado simple con la identidad de la app.
           Center(
             child: Column(
               children: [
-                CircleAvatar(
-                  radius: 48,
-                  backgroundImage: user?.avatarPath != null
-                      ? NetworkImage(
-                          '${Constants.imagesBaseUrl}${user!.avatarPath}')
-                      : null,
-                  child: user?.avatarPath == null
-                      ? const Icon(Icons.person, size: 48)
-                      : null,
+                Container(
+                  width: 84,
+                  height: 84,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: CinexaColors.brandGradient,
+                  ),
+                  child: const Icon(Icons.movie_filter,
+                      color: Colors.white, size: 44),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  user?.name.isNotEmpty == true
-                      ? user!.name
-                      : (user?.username ?? ''),
+                  'Cinexa',
                   style: Theme.of(context)
                       .textTheme
                       .titleLarge
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                if (user != null)
-                  Text(
-                    '@${user.username}',
-                    style: const TextStyle(color: CinexaColors.muted),
-                  ),
+                const Text(
+                  'Elige qué ver con tu gente',
+                  style: TextStyle(color: CinexaColors.muted),
+                ),
               ],
             ),
           ),
@@ -114,25 +95,6 @@ class ProfileView extends StatelessWidget {
             ),
             onTap: () => _showAbout(context),
           ),
-          const Divider(),
-
-          // Iniciar / cerrar sesión según el estado.
-          if (user == null)
-            ListTile(
-              leading: const Icon(Icons.login, color: CinexaColors.coral),
-              title: const Text('Iniciar sesión'),
-              subtitle: const Text(
-                'Opcional: para guardar favoritos de tu cuenta TMDB',
-                style: TextStyle(color: CinexaColors.muted),
-              ),
-              onTap: () => context.go(Routes.signIn),
-            )
-          else
-            ListTile(
-              leading: const Icon(Icons.logout, color: CinexaColors.coral),
-              title: const Text('Cerrar sesión'),
-              onTap: () => _signOut(context),
-            ),
         ],
       ),
     );

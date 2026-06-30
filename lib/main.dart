@@ -32,6 +32,7 @@ import 'app/data/services/remote/performers_service.dart';
 import 'app/data/services/remote/person_service.dart';
 import 'app/data/services/remote/search_service.dart';
 import 'app/data/services/remote/trending_service.dart';
+import 'app/presentation/global/controllers/favorites_controller.dart';
 import 'app/presentation/global/controllers/session_controller.dart';
 import 'app/presentation/global/controllers/theme_controller.dart';
 import 'app/presentation/global/pwa/pwa.dart';
@@ -97,6 +98,10 @@ Future<void> main() async {
         // Tema (claro/oscuro) persistido.
         ChangeNotifierProvider<ThemeController>(
           create: (_) => ThemeController(prefs),
+        ),
+        // Favoritos locales (sin cuenta), persistidos en el dispositivo.
+        ChangeNotifierProvider<FavoritesController>(
+          create: (_) => FavoritesController(prefs),
         ),
       ],
       child: const MyApp(),

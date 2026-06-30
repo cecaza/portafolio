@@ -29,6 +29,9 @@ class MatchController extends ChangeNotifier {
   /// Fuente de películas conocidas (curadas o descubiertas).
   final List<Movie> _buffer = [];
 
+  /// Películas que mi pareja ya likeó (se muestran primero en mi mazo).
+  final List<Movie> _partnerLikes = [];
+
   /// Ids ya swipeados por mí (no vuelven a salir en el mazo).
   final Set<int> _swiped = {};
 
@@ -39,17 +42,32 @@ class MatchController extends ChangeNotifier {
   StreamSubscription<MatchRoom>? _roomSub;
   StreamSubscription<List<Movie>>? _candidatesSub;
   StreamSubscription<Set<int>>? _swipedSub;
+  StreamSubscription<List<Movie>>? _partnerLikesSub;
 
   /// Modo descubrimiento activo cuando hay géneros elegidos.
   bool get inDiscoverMode => room?.genreIds.isNotEmpty ?? false;
 
-  /// Cartas pendientes (en buffer y aún no swipeadas), sin repetir.
+  /// Cartas pendientes, sin repetir y sin las que ya swipeé. Las que mi pareja
+  /// ya likeó van PRIMERO (si yo les doy like, hay match al instante).
   List<Movie> get deck {
     final seen = <int>{};
-    return _buffer
-        .where((m) => !_swiped.contains(m.id) && seen.add(m.id))
-        .toList();
+    final result = <Movie>[];
+    for (final m in _partnerLikes) {
+      if (!_swiped.contains(m.id) && seen.add(m.id)) result.add(m);
+    }
+    for (final m in _buffer) {
+      if (!_swiped.contains(m.id) && seen.add(m.id)) result.add(m);
+    }
+    return result;
   }
+
+  /// Ids que mi pareja ya likeó (para marcarlos "🔥" en el mazo).
+  Set<int> get partnerLikedIds => _partnerLikes.map((m) => m.id).toSet();
+
+  /// Cuántas cartas quedan del pool propio (sin contar las de la pareja), para
+  /// decidir si recargar más sugerencias.
+  int get _poolRemaining =>
+      _buffer.where((m) => !_swiped.contains(m.id)).length;
 
   Future<void> init() async {
     uid = await Repositories.match.ensureSignedIn();
@@ -112,6 +130,7 @@ class MatchController extends ChangeNotifier {
   void _bindRoom(MatchRoom r) {
     room = r;
     _buffer.clear();
+    _partnerLikes.clear();
     _swiped.clear();
     _discoverPage = 0;
     _discoverTotalPages = 1;
@@ -126,6 +145,15 @@ class MatchController extends ChangeNotifier {
         ..clear()
         ..addAll(ids);
       _maybeRefillDiscover();
+      notifyListeners();
+    });
+
+    _partnerLikesSub?.cancel();
+    _partnerLikesSub =
+        Repositories.match.watchPartnerLikes(r.id, uid!).listen((likes) {
+      _partnerLikes
+        ..clear()
+        ..addAll(likes);
       notifyListeners();
     });
 
@@ -172,7 +200,7 @@ class MatchController extends ChangeNotifier {
   }
 
   void _maybeRefillDiscover() {
-    if (inDiscoverMode && deck.length < 5) {
+    if (inDiscoverMode && _poolRemaining < 5) {
       _loadNextDiscoverPage();
     }
   }
@@ -228,8 +256,10 @@ class MatchController extends ChangeNotifier {
     _roomSub?.cancel();
     _candidatesSub?.cancel();
     _swipedSub?.cancel();
+    _partnerLikesSub?.cancel();
     room = null;
     _buffer.clear();
+    _partnerLikes.clear();
     _swiped.clear();
     notifyListeners();
   }
@@ -239,6 +269,7 @@ class MatchController extends ChangeNotifier {
     _roomSub?.cancel();
     _candidatesSub?.cancel();
     _swipedSub?.cancel();
+    _partnerLikesSub?.cancel();
     super.dispose();
   }
 }
