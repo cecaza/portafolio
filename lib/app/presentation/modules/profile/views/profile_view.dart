@@ -12,6 +12,29 @@ import '../../../routes/routes.dart';
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
+  void _showAbout(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationName: 'Cinexa',
+      applicationVersion: '1.0.0',
+      applicationLegalese: '© 2026 Cinexa',
+      children: const [
+        SizedBox(height: 16),
+        Text(
+          'Datos y pósters de películas proporcionados por TMDB.',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        SizedBox(height: 8),
+        // Atribución requerida por la política de uso de la API de TMDB.
+        Text(
+          'This product uses the TMDB API but is not endorsed or certified '
+          'by TMDB.',
+          style: TextStyle(color: CinexaColors.muted),
+        ),
+      ],
+    );
+  }
+
   Future<void> _signOut(BuildContext context) async {
     final sessionController = context.read<SessionController>();
 
@@ -78,6 +101,18 @@ class ProfileView extends StatelessWidget {
             subtitle: Text(
               themeController.isDark ? 'Activado' : 'Desactivado',
             ),
+          ),
+          const Divider(),
+
+          // Acerca de + atribución a TMDB (requerida por su API).
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: const Text('Acerca de'),
+            subtitle: const Text(
+              'Créditos y datos de TMDB',
+              style: TextStyle(color: CinexaColors.muted),
+            ),
+            onTap: () => _showAbout(context),
           ),
           const Divider(),
 
