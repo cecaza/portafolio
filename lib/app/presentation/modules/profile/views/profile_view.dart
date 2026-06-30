@@ -11,7 +11,7 @@ class ProfileView extends StatelessWidget {
     showAboutDialog(
       context: context,
       applicationName: 'Cinexa',
-      applicationVersion: '1.0.0',
+      applicationVersion: '1.0.1',
       applicationLegalese: '© 2026 Cinexa',
       children: const [
         SizedBox(height: 16),
