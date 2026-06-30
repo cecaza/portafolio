@@ -5,3 +5,6 @@ void initPwa() {}
 bool canInstallPwa() => false;
 
 Future<void> installPwa() async {}
+
+/// Solo aplica en web; en nativo no hace nada.
+void downloadApk() {}

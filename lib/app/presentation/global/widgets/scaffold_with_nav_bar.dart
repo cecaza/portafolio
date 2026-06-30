@@ -82,7 +82,13 @@ class ScaffoldWithNavBar extends StatelessWidget {
     }
 
     return Scaffold(
-      body: navigationShell,
+      body: Column(
+        children: [
+          // En web (móvil o escritorio) ofrecemos descargar el APK.
+          if (kIsWeb) const InstallBanner(),
+          Expanded(child: navigationShell),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _goBranch,

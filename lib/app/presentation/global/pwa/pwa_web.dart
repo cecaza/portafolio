@@ -29,3 +29,14 @@ Future<void> installPwa() async {
   prompt.callMethod('prompt'.toJS);
   _deferredPrompt = null;
 }
+
+/// Descarga el APK de Android. El archivo `cinexa.apk` se sirve junto a la web
+/// (mismo origen), así que basta un enlace relativo con atributo `download`.
+void downloadApk() {
+  final anchor = web.HTMLAnchorElement()
+    ..href = 'cinexa.apk'
+    ..setAttribute('download', 'cinexa.apk');
+  web.document.body?.append(anchor);
+  anchor.click();
+  anchor.remove();
+}

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../colors.dart';
 import '../pwa/pwa.dart';
 
-/// Banner que se muestra en navegadores de escritorio invitando a instalar
-/// Cinexa como app (PWA) o a usarla en el celular. Es descartable.
+/// Banner (solo web) que invita a descargar la app de Android (APK) o a
+/// instalar Cinexa como PWA. Se muestra en móvil y escritorio web. Descartable.
 class InstallBanner extends StatefulWidget {
   const InstallBanner({super.key});
 
@@ -14,21 +14,6 @@ class InstallBanner extends StatefulWidget {
 
 class _InstallBannerState extends State<InstallBanner> {
   bool _dismissed = false;
-
-  void _install() {
-    if (canInstallPwa()) {
-      installPwa();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Para instalar, usa el ícono de instalación (⊕) en la barra de '
-            'direcciones de tu navegador, o ábrela en tu celular.',
-          ),
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,19 +25,18 @@ class _InstallBannerState extends State<InstallBanner> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           children: [
-            const Icon(Icons.phone_iphone, color: CinexaColors.coral),
+            const Icon(Icons.android, color: CinexaColors.coral),
             const SizedBox(width: 12),
             const Expanded(
               child: Text(
-                'Cinexa luce mejor en el celular. Instálala como app o ábrela '
-                'en tu móvil.',
+                'Cinexa luce mejor como app. Descárgala para Android.',
               ),
             ),
             const SizedBox(width: 12),
             FilledButton.icon(
-              onPressed: _install,
+              onPressed: downloadApk,
               icon: const Icon(Icons.download, size: 18),
-              label: const Text('Instalar'),
+              label: const Text('Descargar APK'),
             ),
             IconButton(
               tooltip: 'Cerrar',
