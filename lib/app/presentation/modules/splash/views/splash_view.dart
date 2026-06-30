@@ -39,12 +39,14 @@ class _SplashViewState extends State<SplashView> {
     final user = await Repositories.authentication.getUserData();
     if (!mounted) return;
 
+    // El login de TMDB es OPCIONAL: si hay sesión guardada la usamos, pero si
+    // no, entramos igual a la app (catálogo + match funcionan sin cuenta). El
+    // inicio de sesión queda disponible desde Perfil para quien quiera usar
+    // favoritos y demás funciones de su cuenta TMDB.
     if (user != null) {
       sessionController.setUser(user);
-      _goTo(Routes.home);
-    } else {
-      _goTo(Routes.signIn);
     }
+    _goTo(Routes.home);
   }
 
   void _goTo(String routeName) {

@@ -68,6 +68,16 @@ class _SignInBody extends StatelessWidget {
     final state = controller.state;
 
     return Scaffold(
+      // Login opcional: permitir volver a la app sin iniciar sesión.
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go(Routes.home),
+        ),
+      ),
+      extendBodyBehindAppBar: true,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),

@@ -2,6 +2,8 @@ import 'domain/repositories/account_repository.dart';
 import 'domain/repositories/authentication_repository.dart';
 import 'domain/repositories/categories_repository.dart';
 import 'domain/repositories/connectivity_repository.dart';
+import 'domain/repositories/discover_repository.dart';
+import 'domain/repositories/match_repository.dart';
 import 'domain/repositories/movie_repository.dart';
 import 'domain/repositories/performers_repository.dart';
 import 'domain/repositories/person_repository.dart';
@@ -27,4 +29,6 @@ class Repositories {
   static late PersonRepository person;
   static late MovieRepository movie;
   static late SearchRepository search;
+  static late DiscoverRepository discover;
+  static late MatchRepository match;
 }

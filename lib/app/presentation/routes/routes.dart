@@ -11,4 +11,5 @@ class Routes {
   static const profile = '/profile';
   static const search = '/search';
   static const category = '/category';
+  static const match = '/match';
 }

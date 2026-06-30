@@ -5,6 +5,7 @@ import '../global/widgets/scaffold_with_nav_bar.dart';
 import '../modules/category/views/category_view.dart';
 import '../modules/favorites/views/favorites_view.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/match/views/match_view.dart';
 import '../modules/movie/views/movie_detail_view.dart';
 import '../modules/offline/views/offline_view.dart';
 import '../modules/person/views/person_detail_view.dart';
@@ -72,6 +73,14 @@ GoRouter createAppRouter() {
               GoRoute(
                 path: Routes.favorites,
                 builder: (_, __) => const FavoritesView(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.match,
+                builder: (_, __) => const MatchView(),
               ),
             ],
           ),

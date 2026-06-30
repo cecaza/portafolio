@@ -42,6 +42,14 @@ class _FavoritesViewState extends State<FavoritesView> {
 
   @override
   Widget build(BuildContext context) {
+    // Los favoritos son de la cuenta TMDB: sin sesión, invitamos a entrar.
+    final isSignedIn = context.watch<SessionController>().isSignedIn;
+    if (!isSignedIn) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Favoritos')),
+        body: _SignInPrompt(),
+      );
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Favoritos')),
       body: RefreshIndicator(
@@ -113,6 +121,42 @@ class _FavoritePoster extends StatelessWidget {
   Widget _poster() {
     return Assets.branding.placeholders.posterPlaceholderPng
         .image(fit: BoxFit.cover);
+  }
+}
+
+class _SignInPrompt extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Assets.branding.placeholders.emptyStatePng.image(width: 160),
+            const SizedBox(height: 16),
+            const Text(
+              'Inicia sesión para tus favoritos',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Los favoritos se guardan en tu cuenta de TMDB. '
+              'Puedes usar el resto de la app sin iniciar sesión.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: CinexaColors.muted),
+            ),
+            const SizedBox(height: 20),
+            FilledButton.icon(
+              onPressed: () => context.go(Routes.signIn),
+              icon: const Icon(Icons.login),
+              label: const Text('Iniciar sesión'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

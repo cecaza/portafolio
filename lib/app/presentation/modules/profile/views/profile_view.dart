@@ -18,7 +18,7 @@ class ProfileView extends StatelessWidget {
     await Repositories.authentication.signOut();
     sessionController.clear();
     if (context.mounted) {
-      context.go(Routes.signIn);
+      context.go(Routes.home);
     }
   }
 
@@ -81,12 +81,23 @@ class ProfileView extends StatelessWidget {
           ),
           const Divider(),
 
-          // Cerrar sesión.
-          ListTile(
-            leading: const Icon(Icons.logout, color: CinexaColors.coral),
-            title: const Text('Cerrar sesión'),
-            onTap: () => _signOut(context),
-          ),
+          // Iniciar / cerrar sesión según el estado.
+          if (user == null)
+            ListTile(
+              leading: const Icon(Icons.login, color: CinexaColors.coral),
+              title: const Text('Iniciar sesión'),
+              subtitle: const Text(
+                'Opcional: para guardar favoritos de tu cuenta TMDB',
+                style: TextStyle(color: CinexaColors.muted),
+              ),
+              onTap: () => context.go(Routes.signIn),
+            )
+          else
+            ListTile(
+              leading: const Icon(Icons.logout, color: CinexaColors.coral),
+              title: const Text('Cerrar sesión'),
+              onTap: () => _signOut(context),
+            ),
         ],
       ),
     );

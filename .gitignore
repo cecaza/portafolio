@@ -1,5 +1,11 @@
-# Secrets / variables de entorno (NO subir el token de TMDB)
+# Secrets / variables de entorno (NO subir el token de TMDB ni claves Firebase)
 dart_define.json
+
+# Config de Firebase (claves de cliente): se mantienen fuera del repo público.
+# El google-services.json se descarga de la consola de Firebase.
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options_local.dart
 
 # Miscellaneous
 *.class

@@ -15,6 +15,7 @@ const _destinations = [
   (icon: Icons.home_outlined, selected: Icons.home, label: 'Inicio'),
   (icon: Icons.search, selected: Icons.search, label: 'Buscar'),
   (icon: Icons.favorite_border, selected: Icons.favorite, label: 'Favoritos'),
+  (icon: Icons.style_outlined, selected: Icons.style, label: 'Match'),
   (icon: Icons.person_outline, selected: Icons.person, label: 'Perfil'),
 ];
 
