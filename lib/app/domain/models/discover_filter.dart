@@ -17,8 +17,10 @@ class DiscoverFilter {
   /// Nota mínima (0–10) para filtrar; `null` = sin filtro de nota.
   final double? minVoteAverage;
 
-  /// `with_genres` para TMDB: ids separados por coma (OR implícito con `,`).
-  String get genresParam => genres.map((g) => g.id).join(',');
+  /// `with_genres` para TMDB. Usamos `|` (OR): trae pelis de CUALQUIERA de los
+  /// géneros elegidos (ej. aventura O fantasía), no solo las que son de todos
+  /// a la vez (eso sería con coma `,` = AND).
+  String get genresParam => genres.map((g) => g.id).join('|');
 
   bool get isEmpty => genres.isEmpty && minVoteAverage == null;
 
