@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../domain/enums.dart';
 import '../../../../domain/models/discover_filter.dart';
@@ -25,6 +26,9 @@ class MatchController extends ChangeNotifier {
   Movie? lastMatch;
 
   bool busy = false;
+
+  SharedPreferences? _prefs;
+  static const _lastRoomKey = 'lastRoomId';
 
   /// Fuente de películas conocidas (curadas o descubiertas).
   final List<Movie> _buffer = [];
@@ -68,6 +72,22 @@ class MatchController extends ChangeNotifier {
 
   Future<void> init() async {
     uid = await Repositories.match.ensureSignedIn();
+    _prefs = await SharedPreferences.getInstance();
+
+    // Reconectar a la última sala si sigo siendo miembro.
+    final lastRoomId = _prefs?.getString(_lastRoomKey);
+    if (lastRoomId != null) {
+      try {
+        final r = await Repositories.match.getRoom(lastRoomId);
+        if (r != null && r.members.contains(uid)) {
+          _bindRoom(r);
+          return;
+        }
+      } catch (_) {
+        // Si falla la reconexión, seguimos al lobby normal.
+      }
+      await _prefs?.remove(_lastRoomKey);
+    }
     notifyListeners();
   }
 
@@ -126,6 +146,7 @@ class MatchController extends ChangeNotifier {
 
   void _bindRoom(MatchRoom r) {
     room = r;
+    _prefs?.setString(_lastRoomKey, r.id); // recordar para reconectar
     _buffer.clear();
     _partnerLikes.clear();
     _swiped.clear();
@@ -254,6 +275,7 @@ class MatchController extends ChangeNotifier {
     _candidatesSub?.cancel();
     _swipedSub?.cancel();
     _partnerLikesSub?.cancel();
+    _prefs?.remove(_lastRoomKey); // olvidar la sala al salir
     room = null;
     _buffer.clear();
     _partnerLikes.clear();

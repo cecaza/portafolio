@@ -95,6 +95,14 @@ class FirestoreMatchService {
     );
   }
 
+  /// Recupera una sala por su id (para reconectar al reabrir la app).
+  /// Devuelve null si ya no existe.
+  Future<MatchRoom?> getRoom(String roomId) async {
+    final snap = await _rooms.doc(roomId).get();
+    if (!snap.exists) return null;
+    return MatchRoom.fromMap(snap.id, snap.data() ?? const {});
+  }
+
   Stream<MatchRoom> watchRoom(String roomId) {
     return _rooms.doc(roomId).snapshots().map(
           (snap) => MatchRoom.fromMap(snap.id, snap.data() ?? const {}),

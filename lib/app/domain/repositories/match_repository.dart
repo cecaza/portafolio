@@ -19,6 +19,9 @@ abstract class MatchRepository {
   /// [RoomFullException] si ya está llena con otra persona.
   Future<MatchRoom?> joinRoom(String code);
 
+  /// Recupera una sala por su id (para reconectar al reabrir la app).
+  Future<MatchRoom?> getRoom(String roomId);
+
   /// Escucha los cambios de una sala (miembros, géneros).
   Stream<MatchRoom> watchRoom(String roomId);
 

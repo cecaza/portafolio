@@ -28,6 +28,9 @@ class MatchRepositoryImpl implements MatchRepository {
   Future<MatchRoom?> joinRoom(String code) => _service.joinRoom(code);
 
   @override
+  Future<MatchRoom?> getRoom(String roomId) => _service.getRoom(roomId);
+
+  @override
   Stream<MatchRoom> watchRoom(String roomId) => _service.watchRoom(roomId);
 
   @override
